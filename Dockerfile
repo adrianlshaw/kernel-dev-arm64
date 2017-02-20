@@ -6,4 +6,3 @@ ADD fvp /home/dev/fvp/
 WORKDIR /home/dev/
 RUN chown -R dev /home/dev/fvp/*
 USER dev
-#ENTRYPOINT ["make", "qemu"]

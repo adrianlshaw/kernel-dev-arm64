@@ -40,7 +40,7 @@ docker-foundation:
 	@docker build -t aarch64-test .
 	@docker run -e DISPLAY=$DISPLAY -v /tmp/.X11-unix:/tmp/.X11-unix --rm --entrypoint "make" -ti aarch64-test "foundation"
 
-foundation: all
+foundation: $(IMAGE)
 	@cp kernel.elf kernel.axf
 	@rm -f *\.so*
 	@chmod +x ./fvp/*
