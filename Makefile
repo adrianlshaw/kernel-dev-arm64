@@ -1,3 +1,5 @@
+# To compile rust code, run: rustup target add aarch64-unknown-linux-gnu
+
 IMAGE := kernel.elf
 
 CROSS_COMPILE = aarch64-linux-gnu-
@@ -11,6 +13,7 @@ CFLAGS = -Wall -fno-common -O0 -g \
          -march=armv8-a
 
 OBJS = main.o
+
 
 all: $(IMAGE)
 
@@ -32,6 +35,13 @@ qemu: $(IMAGE)
 			    -nographic -serial mon:stdio \
 	                    -kernel $(IMAGE)
 
+rust:
+	aarch64-linux-gnu-gcc boot.S -c -o boot.o
+	rustc --target aarch64-unknown-linux-gnu -O --emit=obj main.rs
+	$(LD) boot.o main.o -T kernel.ld -o kernel.elf
+	$(OBJDUMP) -d kernel.elf > kernel.list
+	$(OBJDUMP) -t kernel.elf | sed '1,/SYMBOL TABLE/d; s/ .* / /; /^$$/d' > kernel.sym
+
 docker-qemu:
 	@docker build -t aarch64-test .
 	@docker run --rm -ti --entrypoint make aarch64-test qemu
@@ -50,4 +60,4 @@ foundation: $(IMAGE)
 clean:
 	rm -f $(IMAGE) *.o *.so.* *.list *.sym
 
-.PHONY: all qemu clean
+.PHONY: all qemu clean rust
