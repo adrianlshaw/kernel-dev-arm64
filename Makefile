@@ -20,12 +20,12 @@ all: $(IMAGE)
 boot.o: boot.S
 	$(CC) boot.S -c -o boot.o
 
-$(IMAGE): kernel.ld boot.o $(OBJS)
+c: kernel.ld boot.o $(OBJS)
 	$(LD) boot.o $(OBJS) -T kernel.ld -o $(IMAGE)
 	$(OBJDUMP) -d kernel.elf > kernel.list
 	$(OBJDUMP) -t kernel.elf | sed '1,/SYMBOL TABLE/d; s/ .* / /; /^$$/d' > kernel.sym
 
-qemu: $(IMAGE)
+qemu:
 	@qemu-system-aarch64 -M ? | grep virt >/dev/null || exit
 	@echo
 	@echo "To exit press Ctrl-A + X"
@@ -41,6 +41,14 @@ rust:
 	$(LD) boot.o main.o -T kernel.ld -o kernel.elf
 	$(OBJDUMP) -d kernel.elf > kernel.list
 	$(OBJDUMP) -t kernel.elf | sed '1,/SYMBOL TABLE/d; s/ .* / /; /^$$/d' > kernel.sym
+
+docker-qemu-c:
+	@docker build -t aarch64-test .
+	@docker run --rm -ti --entrypoint /bin/bash aarch64-test -c "make c && make qemu"
+
+docker-qemu-rust:
+	@docker build -t aarch64-test .
+	@docker run --rm -ti --entrypoint /bin/bash aarch64-test -c "make rust && make qemu"
 
 docker-qemu:
 	@docker build -t aarch64-test .

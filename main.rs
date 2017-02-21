@@ -1,4 +1,4 @@
-#![feature(no_std, lang_items)]
+#![feature(lang_items)]
 #![crate_type = "staticlib"]
 #![no_std]
 
