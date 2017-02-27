@@ -4,9 +4,9 @@ RUN curl https://sh.rustup.rs -sSf | sh -s -- --default-toolchain nightly -y
 RUN bash -c "source ~/.cargo/env; rustup target add aarch64-unknown-linux-gnu"
 RUN useradd -ms /bin/bash dev
 ENV PATH="/root/.cargo/bin:$PATH"
-ADD * /home/dev/
 ADD ./fvp /home/dev/fvp/
 WORKDIR /home/dev/
 RUN chown -R dev /home/dev/fvp/*
 RUN echo "source ~/.cargo/env" >> ~/.bashrc
+ADD * /home/dev/
 ENTRYPOINT ["/bin/bash"]
