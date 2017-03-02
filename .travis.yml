@@ -6,7 +6,7 @@ before_install:
   - sudo apt-get install -y curl make gcc-aarch64-linux-gnu git
   - sudo apt-get build-dep qemu
   - git clone https://github.com/qemu/qemu/ --branch=stable-2.7 --depth=1
-  - cd qemu && ./configure && sudo make install
+  - cd qemu && ./configure --target-list=aarch64-softmmu && sudo make -j2 install
   - cd ..
   - curl https://sh.rustup.rs -sSf | sh -s -- --default-toolchain nightly -y 
   - source ~/.cargo/env && rustup target add aarch64-unknown-linux-gnu
