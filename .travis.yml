@@ -3,9 +3,9 @@ dist: trusty
 
 before_install:
   - sudo apt-get -qq update
-  - sudo apt-get install -y install curl cargo make timeout gcc-aarch64-linux-gnu qemu-system-arm
+  - sudo apt-get install -y install curl make gcc-aarch64-linux-gnu qemu-system-arm
   - sudo curl https://sh.rustup.rs -sSf | sh -s -- --default-toolchain nightly -y 
   - bash -c "source ~/.cargo/env; rustup target add aarch64-unknown-linux-gnu"
 
 language: bash
-script: make rust && timeout 10 make qemu > output 
+script: make rust && timeout 10 make qemu > output && cat output 
