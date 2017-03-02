@@ -1,3 +1,4 @@
+#![feature(asm)]
 #![feature(core_intrinsics, lang_items)]
 #![crate_type = "staticlib"]
 #![no_std]
@@ -8,12 +9,6 @@ use core::intrinsics::volatile_store;
 const UART0_BASE: u32 = 0x09000000;
 const UART0_OFFSET_FULLQ: u32 = 0x18;
 
-struct trap_info {
-    vector: u8,
-    flags: u8,
-    cs: u16,
-    address: u64
-}
 
 fn mmio_write(reg: u32, val: u32) {
     unsafe { volatile_store(reg as *mut u32, val) }
@@ -56,7 +51,6 @@ pub extern fn main() {
     loop {
 
     }
-
 }
 
 #[lang = "eh_personality"]
