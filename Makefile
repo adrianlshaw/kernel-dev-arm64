@@ -29,7 +29,7 @@ qemu:
 	@qemu-system-aarch64 -M ? | grep virt >/dev/null || exit
 	@echo
 	@echo "To exit press Ctrl-A + X"
-	/usr/local/bin/qqemu-system-aarch64 -machine virt \
+	qemu-system-aarch64 -machine virt \
 			    -cpu cortex-a57 \
 	                    -smp 4 -m 4096 \
 			    -nographic -serial mon:stdio \
