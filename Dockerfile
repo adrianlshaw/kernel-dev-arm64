@@ -1,5 +1,5 @@
 FROM ubuntu:16.04
-RUN apt-get update && apt-get -y install make gcc-aarch64-linux-gnu qemu-system-arm
+RUN apt-get update && apt-get -y install make gcc-aarch64-linux-gnu qemu-system-arm gdb-multiarch tmux
 RUN useradd -ms /bin/bash dev
 ADD * /home/dev/
 ADD fvp /home/dev/fvp/

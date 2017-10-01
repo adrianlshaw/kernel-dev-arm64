@@ -1,0 +1,3 @@
+[submodule "fvp"]
+	path = fvp
+	url = git@gitlab.com:adrianlshaw/fvp.git

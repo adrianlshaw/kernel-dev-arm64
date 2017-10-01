@@ -8,7 +8,7 @@ OBJDUMP = $(CROSS_COMPILE)objdump
 
 CFLAGS = -Wall -fno-common -O0 -g \
          -nostdlib -nostartfiles -ffreestanding \
-         -march=armv8-a
+         -march=armv8-a -mgeneral-regs-only
 
 OBJS = main.o
 
@@ -26,11 +26,20 @@ qemu: $(IMAGE)
 	@qemu-system-aarch64 -M ? | grep virt >/dev/null || exit
 	@echo
 	@echo "To exit press Ctrl-A + X"
-	qemu-system-aarch64 -machine virt \
+	@echo "Waiting for GDB to connect on 1234"
+	# For GICv3 change to: -machine virt,gic_version=3
+	@echo "(To run secure mode add: -machine virt,secure=on)"
+	qemu-system-aarch64 -machine virt,gic_version=3 \
 			    -cpu cortex-a57 \
-	                    -smp 4 -m 4096 \
+	            -smp 4 -m 4096 \
 			    -nographic -serial mon:stdio \
-	                    -kernel $(IMAGE)
+			    -gdb tcp::1234 \
+			    -S \
+				-sandbox on \
+	            -kernel $(IMAGE)
+
+gdb:
+	@gdb-multiarch $(IMAGE) -x gdbfile
 
 docker-qemu:
 	@docker build -t aarch64-test .
@@ -38,7 +47,10 @@ docker-qemu:
 
 docker-foundation:
 	@docker build -t aarch64-test .
-	@docker run -e DISPLAY=$DISPLAY -v /tmp/.X11-unix:/tmp/.X11-unix --rm --entrypoint "make" -ti aarch64-test "foundation"
+	@docker run -e DISPLAY=$DISPLAY \
+		-v /tmp/.X11-unix:/tmp/.X11-unix \
+	       	--rm --entrypoint "make" \
+		-ti aarch64-test "foundation"
 
 foundation: $(IMAGE)
 	@cp kernel.elf kernel.axf
@@ -50,4 +62,9 @@ foundation: $(IMAGE)
 clean:
 	rm -f $(IMAGE) *.o *.so.* *.list *.sym
 
-.PHONY: all qemu clean
+test:
+	@tmux new-session 'make qemu' \; \
+		split-window 'make gdb' \; \
+		select-layout even-horizontal
+
+.PHONY: all qemu clean test
