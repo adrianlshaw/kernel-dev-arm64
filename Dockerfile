@@ -4,5 +4,5 @@ RUN useradd -ms /bin/bash dev
 ADD * /home/dev/
 ADD fvp /home/dev/fvp/
 WORKDIR /home/dev/
-RUN chown -R dev /home/dev/fvp/*
+RUN chown -R dev /home/dev/fvp/
 USER dev
